@@ -1,6 +1,6 @@
 {
   "name": "@marius98/myzone-common",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -12,6 +12,7 @@
     "build": "tsc",
     "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run build && npm publish --access public"
   },
+  "keywords": [],
   "author": "Marius Vasili",
   "license": "ISC",
   "dependencies": {
@@ -25,6 +26,6 @@
     "typescript": "^4.1.2"
   },
   "devDependencies": {
-    "del-cli": "^4.0.1"
+    "del-cli": "^3.0.1"
   }
 }
