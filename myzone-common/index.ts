@@ -1,2 +1,2 @@
-export * from "./utils/HTTPError";
-export * from "./utils/asyncWrapper";
+export * from "./src/utils/HTTPError";
+export * from "./src/utils/asyncWrapper";
