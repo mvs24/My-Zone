@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 interface UserAttributes {
   name: string;
@@ -6,7 +7,7 @@ interface UserAttributes {
   photo?: string;
   email: string;
   password: string;
-  passwordConfirm: string;
+  passwordConfirm?: string;
 }
 
 interface UserDocument extends mongoose.Document {
@@ -15,7 +16,7 @@ interface UserDocument extends mongoose.Document {
   photo?: string;
   email: string;
   password: string;
-  passwordConfirm: string;
+  passwordConfirm?: string;
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
@@ -38,6 +39,28 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.build = function (attributes: UserAttributes) {
   return new User(attributes);
 };
+
+const getEncryptedPassword = (password: string): Promise<string> => {
+  return bcrypt.hash(password, 12);
+};
+
+const handlePasswordEncryption = async function (
+  userDocument: UserDocument,
+  next: (err?: mongoose.CallbackError | undefined) => void
+) {
+  if (!userDocument.isModified("password")) return next();
+
+  const encryptedPassword = await getEncryptedPassword(userDocument.password);
+
+  userDocument.password = encryptedPassword;
+  userDocument.passwordConfirm = undefined;
+
+  next();
+};
+
+userSchema.pre("save", function (next) {
+  handlePasswordEncryption(this, next);
+});
 
 const User = mongoose.model<UserDocument, UserModel>("User", userSchema);
 

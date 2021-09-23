@@ -1,16 +1,19 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-service
+  name: ingress-nginx
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: myzone.network
+    - host: myzone.com
       http:
         paths:
           - path: /api/users/?(.*)
+            pathType: Prefix
             backend:
-              serviceName: authentication-cluster-ip
-              servicePort: 3000
+              service:
+                name: authentication-cluster-ip
+                port:
+                  number: 3000
