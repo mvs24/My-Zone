@@ -18,16 +18,16 @@ spec:
           env:
             - name: NODE_ENV
               value: "development"
-            - name: JWT_SECRET
-              value: "ultra-super-secret-fsdsgdfhhtrcsacsa"
-            # - name: NATS_CLIENT_ID
-            #   valueFrom:
-            #     fieldRef:
-            #       fieldPath: metadata.name
-            # - name: NATS_URL
-            #   value: "http://nats-cluster-ip:4222"
-            # - name: NATS_CLUSTER_ID
-            #   value: connectix
+          #   - name: JWT_SECRET
+          #     value: "ultra-super-secret-fsdsgdfhhtrcsacsa"
+          # - name: NATS_CLIENT_ID
+          #   valueFrom:
+          #     fieldRef:
+          #       fieldPath: metadata.name
+          # - name: NATS_URL
+          #   value: "http://nats-cluster-ip:4222"
+          # - name: NATS_CLUSTER_ID
+          #   value: connectix
       # tolerations:
       #   - key: "authentication-key"
       #     operator: "Equal"
