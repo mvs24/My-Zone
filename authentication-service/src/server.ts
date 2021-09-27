@@ -1,7 +1,7 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import authenticationRoutes from "./routes/authentication";
-import { globalErrorHandler } from "@marius98/myzone-common-package";
+import { globalErrorHandler, HTTPError } from "@marius98/myzone-common-package";
 
 const app = express();
 
@@ -10,14 +10,17 @@ app.use(express.json());
 
 app.use("/api/users", authenticationRoutes);
 
-app.get("/ds", (req, res) => {
-  res.send("sfvsd");
-});
+app.all("*", (_req: Request, _res: Response, next: NextFunction) =>
+  next(new HTTPError("Route is not defined!", 404))
+);
 
 app.use(globalErrorHandler);
 
-console.clear();
 const startServer = async () => {
+  console.clear();
+
+  if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET must be defined!");
+
   let MONGO_URI: string =
     process.env.NODE_ENV === "development"
       ? "mongodb://host.docker.internal:27017/myzone-users"
@@ -33,7 +36,14 @@ const startServer = async () => {
     );
   } catch (error) {
     console.log(error);
+    // process.exit(1);
   }
 };
+
+["uncaughtException", "unhandledRejection"].forEach((event) => {
+  process.on(event, () => {
+    process.exit(1);
+  });
+});
 
 startServer();

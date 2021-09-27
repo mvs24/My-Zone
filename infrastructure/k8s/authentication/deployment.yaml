@@ -18,8 +18,8 @@ spec:
           env:
             - name: NODE_ENV
               value: "development"
-          #   - name: JWT_SECRET
-          #     value: "ultra-super-secret-fsdsgdfhhtrcsacsa"
+            - name: JWT_SECRET
+              value: "ultra-super-secret-fsdsgdfhhtrcsacsa"
           # - name: NATS_CLIENT_ID
           #   valueFrom:
           #     fieldRef:

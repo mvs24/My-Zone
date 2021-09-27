@@ -10,31 +10,42 @@ interface UserAttributes {
   passwordConfirm?: string;
 }
 
-interface UserDocument extends mongoose.Document {
+export interface UserDocument extends mongoose.Document {
+  id: string;
   name: string;
   lastName: string;
   photo?: string;
   email: string;
   password: string;
   passwordConfirm?: string;
+  isPasswordCorrect(candidatePassword: string): Promise<boolean>;
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
   build(attributes: UserAttributes): UserDocument;
 }
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  lastName: String,
-  photo: String,
-  role: String,
-  email: String,
-  password: String,
-  passwordConfirm: String,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  passwordChangedAt: Date,
-});
+const userSchema = new mongoose.Schema(
+  {
+    name: String,
+    lastName: String,
+    photo: String,
+    role: String,
+    email: String,
+    password: String,
+    passwordConfirm: String,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    passwordChangedAt: Date,
+  },
+  {
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = doc.id;
+      },
+    },
+  }
+);
 
 userSchema.statics.build = function (attributes: UserAttributes) {
   return new User(attributes);
@@ -61,6 +72,12 @@ const handlePasswordEncryption = async function (
 userSchema.pre("save", function (next) {
   handlePasswordEncryption(this, next);
 });
+
+userSchema.methods.isPasswordCorrect = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model<UserDocument, UserModel>("User", userSchema);
 
