@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface UserAttributes {
   name: string;
@@ -11,13 +12,14 @@ interface UserAttributes {
 }
 
 export interface UserDocument extends mongoose.Document {
-  id: string;
+  id?: string;
   name: string;
   lastName: string;
   photo?: string;
   email: string;
   password: string;
   passwordConfirm?: string;
+  version: number;
   isPasswordCorrect(candidatePassword: string): Promise<boolean>;
 }
 
@@ -46,6 +48,8 @@ const userSchema = new mongoose.Schema(
     },
   }
 );
+userSchema.set("versionKey", "version");
+userSchema.plugin(updateIfCurrentPlugin);
 
 userSchema.statics.build = function (attributes: UserAttributes) {
   return new User(attributes);

@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import authenticationRoutes from "./routes/authentication";
 import { globalErrorHandler, HTTPError } from "@marius98/myzone-common-package";
+import { natsWrapper } from "./NatsWrapper";
 
 const app = express();
 
@@ -30,13 +31,18 @@ const startServer = async () => {
     await mongoose.connect(MONGO_URI);
     console.log("Authentication service database connected successfully.");
 
+    await natsWrapper.connect(`http://nats-cluster-ip:4222`);
+    console.log(
+      "Authentication Service, Node Nats Streaming connected successfully!"
+    );
+
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () =>
       console.log(`Authentication service is listening on PORT ${PORT}.`)
     );
   } catch (error) {
     console.log(error);
-    // process.exit(1);
+    process.exit(1);
   }
 };
 

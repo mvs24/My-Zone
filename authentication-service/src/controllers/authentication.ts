@@ -8,6 +8,8 @@ import {
 import { IUser, SignupRequestBody } from "./types";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
+import { UserCreatedPublisher } from "../events/publishers/UserCreatedPublisher";
+import { natsWrapper } from "../NatsWrapper";
 
 // UTILITY FUNCTIONS
 
@@ -86,7 +88,6 @@ export const login = asyncWrapper(
 
     const userPayload: IUser = {
       _id: existingUser._id,
-      id: existingUser.id,
       name: existingUser.name,
       lastName: existingUser.lastName,
       email: existingUser.email,
@@ -125,12 +126,20 @@ export const signup = asyncWrapper(
 
         const userPayload: IUser = {
           _id: newUser._id,
-          id: newUser._id,
           name: newUser.name,
           lastName: newUser.lastName,
           email: newUser.email,
         };
         const token = getSignedToken(userPayload);
+
+        new UserCreatedPublisher(natsWrapper.stan).publish({
+          _id: userPayload._id,
+          name: userPayload.name,
+          lastName: userPayload.lastName,
+          email: userPayload.email,
+          version: newUser.version,
+        });
+        console.log("event pusblished");
 
         res.status(201).json({
           status: "success",

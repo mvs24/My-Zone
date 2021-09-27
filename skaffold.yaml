@@ -16,11 +16,3 @@ build:
         manual:
           - src: "src"
             dest: .
-    - image: marius24/myzone-authentication-service
-      context: authentication-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src"
-            dest: .

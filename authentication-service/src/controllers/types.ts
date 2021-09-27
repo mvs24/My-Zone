@@ -7,7 +7,6 @@ export interface SignupRequestBody {
 }
 
 export interface IUser {
-  id: string;
   _id: string;
   name: string;
   lastName: string;
